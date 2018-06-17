@@ -1,0 +1,29 @@
+<!doctype html>
+<title>Stock Ticker Lookup</title>
+<link rel=stylesheet type=text/css href='{{ url_for('static',filename='style_lulu.css')}}'>
+<div class=page>
+  <h1>Stock Ticker App</h1>
+  <div class=metanav>
+
+    <h4>
+      Please type the abbreviation for the stock name.
+    </h4>
+
+    <form id='stock_info' method='post' action='index_mine' >
+      <p>
+    Company: <input type='text' name='stock_name' />
+      </p>
+      <p>
+    <input type='checkbox' name='var1' value='Close'> Closing Price <br>
+    <input type='checkbox' name='var2' value='Adj. Close'> Adjusted Closing Price <br>
+    <input type='checkbox' name='var3' value='Open'> Opening Price <br>
+    <input type='checkbox' name='var4' value='Adj. Open'> Adjusted Opening Price <br>
+      </p>
+      <p>
+    <input type='submit' value='Submit' />
+      </p>
+    </form>
+
+  </div>
+</div>
+</html>

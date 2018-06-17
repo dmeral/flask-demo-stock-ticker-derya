@@ -1,0 +1,5 @@
+Stock: GOOG
+Choice1: Close
+
+Choice3: Open
+

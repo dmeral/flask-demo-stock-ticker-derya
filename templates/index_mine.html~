@@ -1,0 +1,30 @@
+<!doctype html>
+<title>Which stock would you like to look up?</title>
+<link rel=stylesheet type=text/css href='{{ url_for('static',filename='style_lulu.css')}}'>
+<div class=page>
+  <h1>Stock Name:</h1>
+  <div class=metanav>
+
+    <h4>
+      Please type the abbreviation for the stock name.
+    </h4>
+
+    <form id='stock_info' method='post' action='index_mine' >
+      <p>
+    Stock: <input type='text' name='stock_name' />
+      </p>
+      <p>
+	Type:
+	<input type='checkbox' name='var1' value="Close"> Close />
+	<input type='checkbox' name='var2' value="Close"> Close />
+	<input type='checkbox' name='var3' value="Close"> Close />
+	<input type='checkbox' name='var4' value="Close"> Close />
+      </p>
+      <p>
+    <input type='submit' value='Submit' />
+      </p>
+    </form>
+
+  </div>
+</div>
+</html>
