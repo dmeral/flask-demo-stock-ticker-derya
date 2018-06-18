@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for, session
 import requests
 from bokeh.plotting import figure
 from bokeh.embed import components 
@@ -13,7 +13,7 @@ app.vars = {}
 
 def create_plot(stock,types_list):
   # Load data:
-  api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json' % stock
+  api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=N_mE5xwVmBJ4hfvDMbsP' % stock
   session = requests.Session()
   session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
   raw_data = session.get(api_url)
@@ -22,23 +22,26 @@ def create_plot(stock,types_list):
   json_string = json.dumps(raw_data.json(), sort_keys=True)
   obj = json.loads(json_string)
   index_dates = pd.to_datetime(pd.Series(np.array(obj['data'])[:,0]),format="%Y-%m-%d")
-  df = pd.DataFrame(np.array(obj['data'])[:,1:],columns=obj['column_names'][1:],index=index_dates)
+  df = pd.DataFrame(np.array(obj['data'])[:,1:],dtype=float,columns=obj['column_names'][1:],index=index_dates)
   
   #print(df)
   # Create the plot:
-  plot = figure(#tools=TOOLS,
-              title='Data from Quandle WIKI set',
-              x_axis_label='date',
-              x_axis_type='datetime')
+  plot = figure(title='Data from Quandle WIKI set',
+                x_axis_label='date',
+                x_axis_type='datetime',
+                y_axis_label='stock value')
   colors = ["red","blue","black","magenta"]
   i=0
   for sel in types_list:
-    plot.line(df.index,df[sel],color=colors[i])
+    plot.line(df.index,df[sel],color=colors[i],alpha=1.,
+               muted_color=colors[i], muted_alpha=0.2,legend=sel)
     i+=1
+  plot.legend.location = "top_left"
+  plot.legend.click_policy="mute"
   return plot
 
 
-@app.route('/index_mine',methods=['GET','POST'])
+@app.route('/index',methods=['GET','POST'])
 def index():
   if request.method == 'GET':
     return render_template('index_mine.html')
@@ -66,6 +69,7 @@ def index():
       types_list.append(json.loads(json.dumps(request.form['var4'])))
     except:
       pass
+    app.vars['types']=types_list
     f = open('output.txt','w')
     f.write('Stock: %s\n'%(app.vars['stock']))
     try:
@@ -85,11 +89,28 @@ def index():
     except:
       pass
     f.close()
-    #return str(types_list)
     plot = create_plot(app.vars['stock'],types_list)
     script, div = components(plot)
     return render_template('graph.html',script=script, div=div)
+    #variables = json.dumps(app.vars)
+    #session['variables'] = variables
+    #return redirect(url_for('about', keys='stock',types='blah'))
+    
+
+
+
+#@app.route('/about',methods=['GET','POST'])
+#def about(keys,types):
+#  return str(request.args.get('keys'))
+#  stock = json.loads(request.args.get('stock_name'))
+#  #stock = request.args.get('stock_name')
+#  #types = request.args.get('types')
+#  return str(stock)
+#  #plot = create_plot(app.vars['stock'],types_list)
+#  #script, div = components(plot)
+#  #return render_template('graph.html',script=script, div=div)
 
 
 if __name__ == '__main__':
-  app.run(port=33507)
+  #app.run(debug=True)
+  app.run(port=33507,host='0.0.0.0',debug=True)
