@@ -6,7 +6,7 @@
   <div class=metanav>
 
     <h4>
-      Please type the abbreviation for the stock name.
+      Please type the abbreviation for the stock name (ie. GOOG, AAPL).
     </h4>
 
     <form id='stock_info' method='post' action='index' >

@@ -9,8 +9,6 @@ from bokeh.io import output_file, output_notebook, show
 
 app = Flask(__name__)
 
-app.vars = {}
-
 def create_plot(stock,types_list):
   # Load data:
   api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=N_mE5xwVmBJ4hfvDMbsP' % stock
@@ -41,76 +39,27 @@ def create_plot(stock,types_list):
   return plot
 
 
-@app.route('/index',methods=['GET','POST'])
+@app.route('/',methods=['GET','POST'])
 def index():
-  if request.method == 'GET':
-    return render_template('index_mine.html')
-  else:
-    #request was a POST
-    app.vars['stock'] = json.loads(json.dumps(request.form['stock_name']))
-    types_list = []
-    try:
-      app.vars['choice1'] = request.form['var1']
-      types_list.append(json.loads(json.dumps(request.form['var1'])))
-    except:
-      pass
-    try:
-      app.vars['choice2'] = request.form['var2']
-      types_list.append(json.loads(json.dumps(request.form['var2'])))
-    except:
-      pass
-    try:
-      app.vars['choice3'] = request.form['var3']
-      types_list.append(json.loads(json.dumps(request.form['var3'])))
-    except:
-      pass
-    try:
-      app.vars['choice4'] = request.form['var4']
-      types_list.append(json.loads(json.dumps(request.form['var4'])))
-    except:
-      pass
-    app.vars['types']=types_list
-    f = open('output.txt','w')
-    f.write('Stock: %s\n'%(app.vars['stock']))
-    try:
-      f.write('Choice1: %s\n\n'%(app.vars['choice1']))
-    except:
-      pass
-    try:
-      f.write('Choice2: %s\n\n'%(app.vars['choice2']))
-    except:
-      pass
-    try:
-      f.write('Choice3: %s\n\n'%(app.vars['choice3']))
-    except:
-      pass
-    try:
-      f.write('Choice4: %s\n\n'%(app.vars['choice4']))
-    except:
-      pass
-    f.close()
-    plot = create_plot(app.vars['stock'],types_list)
+  return render_template('index_mine.html')
+
+
+@app.route('/about',methods=['GET','POST'])
+def about():
+  if request.method == 'POST':
+    stock = request.form['stock_name']
+    variables = ['var1','var2','var3','var4']
+    options = []
+    for var in variables:
+      try:
+        options.append(request.form[var])
+      except:
+        pass
+    plot = create_plot(stock,options)
     script, div = components(plot)
     return render_template('graph.html',script=script, div=div)
-    #variables = json.dumps(app.vars)
-    #session['variables'] = variables
-    #return redirect(url_for('about', keys='stock',types='blah'))
-    
-
-
-
-#@app.route('/about',methods=['GET','POST'])
-#def about(keys,types):
-#  return str(request.args.get('keys'))
-#  stock = json.loads(request.args.get('stock_name'))
-#  #stock = request.args.get('stock_name')
-#  #types = request.args.get('types')
-#  return str(stock)
-#  #plot = create_plot(app.vars['stock'],types_list)
-#  #script, div = components(plot)
-#  #return render_template('graph.html',script=script, div=div)
 
 
 if __name__ == '__main__':
   #app.run(debug=True)
-  app.run(port=33507,host='0.0.0.0',debug=True)
+  app.run(port=33507,host='0.0.0.0',debug=False)
