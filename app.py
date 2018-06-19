@@ -7,14 +7,11 @@ import pandas as pd
 import numpy as np
 from bokeh.io import output_file, output_notebook, show
 
-#from boto.s3.connection import S3Connection
-quandl = os.environ['QUANDL_SECRET']
-
 app = Flask(__name__)
 
 def create_plot(stock,types_list):
   # Load data:
-  api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=' % stock + str(quandl)
+  api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json' % stock + str(quandl)
   session = requests.Session()
   session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
   raw_data = session.get(api_url)
