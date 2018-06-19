@@ -65,5 +65,5 @@ def about():
 
 
 if __name__ == '__main__':
-  app.run(debug=True)
-  #app.run(port=33507,host='0.0.0.0',debug=False)
+  #app.run(debug=True)
+  app.run(port=33507,host='0.0.0.0',debug=False)
